@@ -1,6 +1,7 @@
-package addressbook;
+
 import java.util.ArrayList;
 import javax.swing.*;
+import java.io.*;
 
 class PersonInfo {
 
@@ -30,6 +31,7 @@ class AdressBook{
     AdressBook() {
 
         persons = new ArrayList();
+        loadPerson();
 
     }
 
@@ -66,9 +68,66 @@ class AdressBook{
             }
         }
     }
-}
 
-    
+    // save persons in a file
+    void savePerson() {
+
+        try {
+            PersonInfo p;
+            String line;
+            FileWriter fw = new FileWriter("persons.txt");
+            PrintWriter pw = new PrintWriter(fw);
+
+            for(int i = 0; i< persons.size(); i++) {
+
+                p = (PersonInfo) persons.get(i);
+                line = p.name + ","+ p.address + "," + p.phoneNumber;
+                
+                pw.println(line);
+            }
+            pw.flush();
+            fw.close();
+            pw.close();
+
+        } catch(IOException e) {
+
+            System.out.println("Something went wrong!");
+        }
+    }
+
+    // load persons from the file
+    void loadPerson() {
+        String tokens[];
+        String na,ad,ph;
+        PersonInfo p;
+
+        try {
+        FileReader fr = new FileReader("persons.txt");
+        BufferedReader br = new BufferedReader(fr);
+        String line = br.readLine();
+
+        while(line!=null) {
+        tokens = line.split(",");
+        na = tokens[0];
+        ad = tokens[1];
+        ph = tokens[2];
+
+        
+        p = new PersonInfo(na, ad, ph);
+        persons.add(p);
+        line = br.readLine();
+        } 
+        br.close();
+        fr.close();
+
+        } catch(IOException e) {
+
+            System.out.println("Persons file does not exist!");
+        }
+
+
+    }
+    }
 
 
 
@@ -103,6 +162,7 @@ public class Test {
                     break;
                 
                 case 4:
+                    ab.savePerson();
                     System.exit(0);
 
             }
